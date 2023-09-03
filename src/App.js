@@ -120,7 +120,7 @@ const App = () => {
   const renderMintUI = () => {
     return (
       <button onClick={mintNFT} className="cta-button connect-wallet-button" >
-        Mint a Polygon Squirrel NFT
+        Mint a Polygon Kakedashi NFT
       </button >
     );
   }
