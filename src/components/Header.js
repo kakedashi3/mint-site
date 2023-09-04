@@ -5,7 +5,7 @@ function Header(props) {
         <header>
             <h1 className="heading gradient-text">
                 <a href={props.opensea} target='_blank' rel='noreferrer'>
-                    Polygon Squirrels
+                    Polygon Kakedashi
                 </a>
             </h1>
             <div>
