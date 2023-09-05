@@ -8,15 +8,17 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 
 // Constants
-const OPENSEA_LINK = 'https://testnets.opensea.io/collection/rinkeby-squirrels';
-const contractAddress = "0x7aDBc3497BE70a903c5b17BEf184782dD0A7eFAa";
+const OPENSEA_LINK = 'https://opensea.io/collection/kakedashi-mint-collection-1';
+const contractAddress = "0x8d6052ae75fe1068dABb53023a7efBe50563d794";
 const abi = contract.abi;
+const MAX_SUPPLY = 102; // 仮の最大供給量を設定します。
 
 const App = () => {
 
   const [currentAccount, setCurrentAccount] = useState(null);
   const [metamaskError, setMetamaskError] = useState(null);
   const [mineStatus, setMineStatus] = useState(null);
+  const [mintedCount, setMintedCount] = useState(0);
 
   const checkWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -31,12 +33,11 @@ const App = () => {
     const accounts = await ethereum.request({ method: 'eth_accounts' });
     const network = await ethereum.request({ method: 'eth_chainId' });
 
-    if (accounts.length !== 0 && network.toString() === '0x13881') {
+    if (accounts.length !== 0 && network.toString() === '0x89') {
       const account = accounts[0];
       console.log("Found an authorized account: ", account);
       setMetamaskError(false);
       setCurrentAccount(account);
-      //setupEventListener();
     } else {
       setMetamaskError(true);
       console.log("No authorized account found");
@@ -53,14 +54,12 @@ const App = () => {
     try {
       const network = await ethereum.request({ method: 'eth_chainId' });
 
-      if (network.toString() === '0x13881') {
+      if (network.toString() === '0x89') {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         console.log("Found an account! Address: ", accounts[0]);
         setMetamaskError(null);
         setCurrentAccount(accounts[0]);
-      }
-
-      else {
+      } else {
         setMetamaskError(true);
       }
 
@@ -71,9 +70,7 @@ const App = () => {
 
   const mintNFT = async () => {
     try {
-
       setMineStatus('mining');
-
       const { ethereum } = window;
 
       if (ethereum) {
@@ -89,7 +86,6 @@ const App = () => {
 
         console.log(`Mined, see transaction: ${nftTxn.hash}`);
         setMineStatus('success');
-
       } else {
         setMineStatus('error');
         console.log("Ethereum object does not exist");
@@ -101,13 +97,34 @@ const App = () => {
     }
   }
 
+  const getTotalMinted = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const nftContract = new ethers.Contract(contractAddress, abi, signer);
+
+        const totalMinted = await nftContract.getTotalMinted();
+        setMintedCount(totalMinted.toNumber());
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
     checkWalletIsConnected();
+
+    if (currentAccount) {
+      getTotalMinted();
+    }
 
     if (window.ethereum) {
       window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
     }
-  }, [])
+  }, [currentAccount])
 
   // Render Methods
   const renderNotConnectedContainer = () => (
@@ -119,14 +136,14 @@ const App = () => {
   const renderMintUI = () => {
     return (
       <button onClick={mintNFT} className="cta-button connect-wallet-button" >
-        Mint a Mumbai Kakedashi NFT
+        Mint a Polygon Kakedashi NFT
       </button >
     );
   }
 
   return (
     <Fragment>
-      {metamaskError && <div className='metamask-error'>Metamask から Polygon Testnet に接続してください!</div>}
+      {metamaskError && <div className='metamask-error'>Metamask から Polygon に接続してください!</div>}
       <div className="App">
         <div className="container">
           <Header opensea={OPENSEA_LINK} />
@@ -140,7 +157,7 @@ const App = () => {
               {mineStatus === 'success' && <div className={mineStatus}>
                 <p>NFT minting successful!</p>
                 <p className='success-link'>
-                  <a href={`https://testnets.opensea.io/${currentAccount}/`} target='_blank' rel='noreferrer'>Click here</a>
+                  <a href={`https://opensea.io/${currentAccount}/`} target='_blank' rel='noreferrer'>Click here</a>
                   <span> to view your NFT on OpenSea.</span>
                 </p>
               </div>}
@@ -152,17 +169,20 @@ const App = () => {
                 <p>Transaction failed. Make sure you have at least 0.01 MATIC in your Metamask wallet and try again.</p>
               </div>}
             </div>
+            <div className="nft-info">
+              <p>NFTs: {MAX_SUPPLY - mintedCount}/{MAX_SUPPLY}</p>
+            </div>
           </div>
           {currentAccount && <div className='show-user-address'>
-          <p>
-            Your address being connected: &nbsp;
-            <br/>
-                <span>
-                    <a className='user-address' target='_blank' rel='noreferrer'>
-                        {currentAccount}
-                    </a>
-                </span>
-          </p>
+            <p>
+              Your address being connected: &nbsp;
+              <br />
+              <span>
+                <a className='user-address' target='_blank' rel='noreferrer'>
+                  {currentAccount}
+                </a>
+              </span>
+            </p>
           </div>}
           <Footer address={contractAddress} />
         </div>

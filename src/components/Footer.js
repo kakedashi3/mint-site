@@ -10,7 +10,7 @@ function Footer(props) {
                 SMART CONTRACT ADDRESS:&nbsp;
                 <br />
                 <span>
-                    <a className='contract-link' href={`https://mumbai.polygonscan.com/address/${props.address}`} target='_blank' rel='noreferrer'>
+                    <a className='contract-link' href={`https://polygonscan.com/address/${props.address}`} target='_blank' rel='noreferrer'>
                         {props.address}
                     </a>
                 </span>
