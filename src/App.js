@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useEffect, useState } from "react";
-import squirrelImg from './assets/rinkeby_squirrels.gif';
+import squirrelImg from './assets/kakedashi-mint.gif';
 import { ethers } from 'ethers';
 import contract from './contracts/NFTCollectible.json';
 import { Fragment } from 'react/cjs/react.production.min';
