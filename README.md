@@ -1,6 +1,6 @@
 # Collectible NFT demo
 
-![](https://i.imgur.com/YkrGAvV.png)
+![](https://kakedashi-mint.vercel.app/)
 
 このデモを立ち上げるには、下記のステップを実行してください。
 
