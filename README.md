@@ -1,6 +1,6 @@
 # Collectible NFT demo
 
-![](https://imgur.com/Ru8luQg)
+![](https://i.imgur.com/Ru8luQg.png)
 
 このデモを立ち上げるには、下記のステップを実行してください。
 
